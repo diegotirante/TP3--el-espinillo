@@ -24,28 +24,35 @@ interface SlideContentProps {
 
 export const SlideContent = ({ slide }: SlideContentProps) => {
     const handleSpeak = () => {
+        // Cancelar cualquier audio previo para que no se superpongan
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(slide.script);
         utterance.lang = 'es-AR'; 
-        utterance.rate = 0.95; 
-        utterance.pitch = 0.9; // Lower pitch for deeper, professional masculine tone
+        
+        // Parámetros para eliminar lo chillón y rápido
+        utterance.rate = 0.92; 
+        utterance.pitch = 0.85; // Baja el tono de la voz para volverlo más grave y natural
 
         const getBestVoice = () => {
             const voices = window.speechSynthesis.getVoices();
             
-            // Priority list for professional male voices
-            const filters = [
-                (v: SpeechSynthesisVoice) => v.lang.includes('es') && (v.name.includes('Tomás') || v.name.includes('Male') || v.name.includes('Google español') || v.name.includes('Dario')),
-                (v: SpeechSynthesisVoice) => v.lang.includes('es') && !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('zira') && !v.name.toLowerCase().includes('sabina') && !v.name.toLowerCase().includes('helena'),
-                (v: SpeechSynthesisVoice) => v.lang.startsWith('es')
-            ];
+            // Buscador de voz masculina corporativa
+            const vozMasculina = voices.find(voz => {
+                const nombre = voz.name.toLowerCase();
+                const idioma = voz.lang.toLowerCase();
+                return idioma.includes('es') && 
+                       (nombre.includes('pablo') || nombre.includes('david') || nombre.includes('raul') || nombre.includes('google') || nombre.includes('male') || nombre.includes('natural'));
+            });
 
-            for (const filter of filters) {
-                const voice = voices.find(filter);
-                if (voice) return voice;
-            }
-            return null;
+            if (vozMasculina) return vozMasculina;
+
+            // Si no encuentra una específica, busca cualquiera en español que no sea la chillona por defecto
+            return voices.find(voz => 
+                voz.lang.toLowerCase().includes('es') && 
+                !voz.name.toLowerCase().includes('female') && 
+                !voz.name.toLowerCase().includes('zira')
+            ) || voices.find(voz => voz.lang.toLowerCase().includes('es'));
         };
 
         const setVoiceAndSpeak = () => {
