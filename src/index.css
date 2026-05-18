@@ -19,7 +19,23 @@
 }
 
 body {
-    @apply bg-navy text-slate-800 font-sans overflow-hidden;
+    @apply bg-navy text-slate-800 font-sans min-h-screen overflow-x-hidden;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-navy;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-electric/40;
 }
 
 .glass-card {

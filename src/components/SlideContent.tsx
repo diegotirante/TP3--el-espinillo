@@ -73,10 +73,10 @@ export const SlideContent = ({ slide }: SlideContentProps) => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.02 }}
                 transition={{ duration: 0.8, ease: "circOut" }}
-                className="w-full flex flex-col lg:flex-row gap-12 items-center"
+                className="w-full flex flex-col lg:flex-row gap-8 lg:gap-16 items-start lg:items-center"
             >
                 {/* Left Side: Content */}
-                <div className="flex-1 space-y-6">
+                <div className="w-full lg:flex-1 space-y-6 order-2 lg:order-1">
                     {slide.subtitle && (
                         <motion.span 
                             initial={{ opacity: 0 }}
@@ -162,12 +162,12 @@ export const SlideContent = ({ slide }: SlideContentProps) => {
                 </div>
 
                 {/* Right Side: Visuals */}
-                <div className="w-full lg:w-[45%] flex flex-col gap-6">
+                <div className="w-full lg:w-[42%] flex flex-col gap-6 order-1 lg:order-2">
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.3 }}
-                        className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] border-[6px] border-white"
+                        className="relative w-full aspect-video lg:aspect-[4/3] rounded-[2rem] lg:rounded-[2.5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] border-[4px] lg:border-[6px] border-white"
                     >
                         <img 
                             src={slide.image} 
@@ -192,7 +192,7 @@ export const SlideContent = ({ slide }: SlideContentProps) => {
                                     }
                                 }
                             }}
-                            className="grid grid-cols-3 gap-4"
+                            className="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4"
                         >
                             {slide.stats.map((stat, i) => {
                                 const Icon = stat.icon;

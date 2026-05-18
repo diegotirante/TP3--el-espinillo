@@ -186,7 +186,7 @@ export default function App() {
     }, [nextSlide, prevSlide, showSplash]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 md:p-8 relative selection:bg-electric/30 selection:text-white overflow-hidden">
+        <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 lg:p-12 relative selection:bg-electric/30 selection:text-white">
             <AnimatePresence>
                 {showSplash && (
                     <SplashScreen onEnter={() => setShowSplash(false)} />
@@ -195,15 +195,17 @@ export default function App() {
 
             <BackgroundVideo src={SLIDES[currentSlideIndex].video} />
 
-            <main className="glass-card w-full max-w-6xl p-8 md:p-20 z-10 transition-all duration-700 overflow-hidden min-h-[600px] flex items-center shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
-                <SlideContent 
-                    slide={SLIDES[currentSlideIndex]} 
-                    index={currentSlideIndex} 
-                />
+            <main className="glass-card w-full max-w-7xl mx-auto my-24 z-10 transition-all duration-700 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
+                <div className="p-6 md:p-12 lg:p-16 xl:p-20">
+                    <SlideContent 
+                        slide={SLIDES[currentSlideIndex]} 
+                        index={currentSlideIndex} 
+                    />
+                </div>
             </main>
 
             {/* Navigation Bar */}
-            <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-navy/80 backdrop-blur-2xl border border-white/10 px-8 py-5 rounded-full flex items-center gap-10 md:gap-16 z-20 transition-all hover:bg-navy/95 hover:border-electric/40 shadow-[0_20px_50px_rgba(0,0,0,0.4)] group">
+            <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-navy/80 backdrop-blur-2xl border border-white/10 px-6 py-4 md:px-8 md:py-5 rounded-full flex items-center gap-6 md:gap-16 z-40 transition-all hover:bg-navy/95 hover:border-electric/40 shadow-[0_20px_50px_rgba(0,0,0,0.4)] group">
                 <button 
                     id="prevBtn" 
                     onClick={prevSlide}
@@ -240,23 +242,23 @@ export default function App() {
                 </button>
             </nav>
 
-            <header className="fixed top-8 left-8 md:top-12 md:left-12 z-30 pointer-events-none">
+            <header className="fixed top-4 left-4 md:top-12 md:left-12 z-30 pointer-events-none">
                 <motion.div 
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, ease: "circOut" }}
-                    className="flex flex-col gap-1"
+                    className="flex flex-col gap-0.5 md:gap-1"
                 >
-                    <div className="flex items-center gap-3">
-                        <div className="w-[3px] h-8 bg-electric" />
-                        <span className="text-white font-display text-2xl md:text-3xl font-black tracking-tighter uppercase">Diego Tirante</span>
+                    <div className="flex items-center gap-2 md:gap-3">
+                        <div className="w-[2px] md:w-[3px] h-6 md:h-8 bg-electric" />
+                        <span className="text-white font-display text-lg md:text-3xl font-black tracking-tighter uppercase">Diego Tirante</span>
                     </div>
-                    <span className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.6em] text-white/40 pl-4">Nuevo administrador "EL ESPINILLO"</span>
+                    <span className="text-[7px] md:text-[10px] uppercase font-bold tracking-[0.4em] md:tracking-[0.6em] text-white/40 pl-3 md:pl-4 whitespace-nowrap">Nuevo administrador "EL ESPINILLO"</span>
                 </motion.div>
             </header>
 
-            <div className="fixed top-8 md:top-12 left-1/2 -translate-x-1/2 px-6 py-2 rounded-full bg-navy/40 border border-white/5 backdrop-blur-xl text-[10px] md:text-xs uppercase font-black tracking-[0.4em] text-white/60 z-20 shadow-xl flex items-center gap-4">
-                <span className="opacity-30">Status</span>
+            <div className="fixed top-4 md:top-12 right-4 md:left-1/2 md:-translate-x-1/2 px-4 py-1.5 md:px-6 md:py-2 rounded-full bg-navy/40 border border-white/5 backdrop-blur-xl text-[9px] md:text-xs uppercase font-black tracking-[0.3em] md:tracking-[0.4em] text-white/60 z-20 shadow-xl flex items-center gap-3 md:gap-4">
+                <span className="opacity-30 hidden xs:inline">Status</span>
                 <span className="text-electric font-black">{currentSlideIndex + 1}</span>
                 <span className="opacity-10">|</span>
                 <span className="opacity-40">{SLIDES.length}</span>
