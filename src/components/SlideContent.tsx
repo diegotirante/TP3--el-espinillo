@@ -24,48 +24,72 @@ interface SlideContentProps {
 
 export const SlideContent = ({ slide }: SlideContentProps) => {
     const handleSpeak = () => {
-        // Cancelar cualquier audio previo para que no se superpongan
         window.speechSynthesis.cancel();
-
-        const utterance = new SpeechSynthesisUtterance(slide.script);
-        utterance.lang = 'es-AR'; 
         
-        // Parámetros para eliminar lo chillón y rápido
-        utterance.rate = 0.92; 
-        utterance.pitch = 0.85; // Baja el tono de la voz para volverlo más grave y natural
+        const utterance = new SpeechSynthesisUtterance(slide.script);
+        const esMobile = /Android/i.test(navigator.userAgent) || /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        
+        const voicesDisponibles = window.speechSynthesis.getVoices();
+        let vozSeleccionada = null;
 
-        const getBestVoice = () => {
-            const voices = window.speechSynthesis.getVoices();
+        if (esMobile) {
+            // Configuración para Celulares: Priorizamos acento Latino/Neutro (es-US o es-MX) para evitar España
+            utterance.rate = 0.92; // Ritmo pausado y ejecutivo
+            utterance.pitch = 0.90; // Tono más maduro
+
+            // Buscamos variantes masculinas en los paquetes de Google de Latinoamérica o Estados Unidos
+            vozSeleccionada = voicesDisponibles.find(voz => {
+                const nombre = voz.name.toLowerCase();
+                const idioma = voz.lang.toLowerCase();
+                
+                // Buscamos explícitamente español que NO sea de España, priorizando variantes masculinas
+                return (idioma.includes('es-us') || idioma.includes('es-mx') || idioma.includes('es-co')) && 
+                       (nombre.includes('male') || nombre.includes('variant') || nombre.includes('local'));
+            });
+
+            // Si no encuentra una específica, busca cualquier español latino antes que el por defecto
+            if (!vozSeleccionada) {
+                vozSeleccionada = voicesDisponibles.find(voz => 
+                    (voz.lang.toLowerCase().includes('es-us') || voz.lang.toLowerCase().includes('es-mx'))
+                );
+            }
             
-            // Buscador de voz masculina corporativa
-            const vozMasculina = voices.find(voz => {
+            // Fallback: Si no hay específicos, aseguramos que sea español no-España
+            if (!vozSeleccionada) {
+                vozSeleccionada = voicesDisponibles.find(voz => 
+                    voz.lang.toLowerCase().startsWith('es') && !voz.lang.toLowerCase().includes('es-es')
+                );
+            }
+        } else {
+            // Configuración original para PC (Windows) que ya se escuchaba excelente
+            utterance.lang = 'es-AR';
+            utterance.rate = 0.92;
+            utterance.pitch = 0.85; // Tono grave y varonil
+
+            vozSeleccionada = voicesDisponibles.find(voz => {
                 const nombre = voz.name.toLowerCase();
                 const idioma = voz.lang.toLowerCase();
                 return idioma.includes('es') && 
-                       (nombre.includes('pablo') || nombre.includes('david') || nombre.includes('raul') || nombre.includes('google') || nombre.includes('male') || nombre.includes('natural'));
+                       (nombre.includes('pablo') || nombre.includes('david') || nombre.includes('raul') || nombre.includes('google'));
             });
-
-            if (vozMasculina) return vozMasculina;
-
-            // Si no encuentra una específica, busca cualquiera en español que no sea la chillona por defecto
-            return voices.find(voz => 
-                voz.lang.toLowerCase().includes('es') && 
-                !voz.name.toLowerCase().includes('female') && 
-                !voz.name.toLowerCase().includes('zira')
-            ) || voices.find(voz => voz.lang.toLowerCase().includes('es'));
-        };
+        }
 
         const setVoiceAndSpeak = () => {
-            const voice = getBestVoice();
-            if (voice) utterance.voice = voice;
+            if (vozSeleccionada) utterance.voice = vozSeleccionada;
             window.speechSynthesis.speak(utterance);
         };
 
-        // Voices might not be loaded initially
-        if (window.speechSynthesis.getVoices().length > 0) {
+        if (voicesDisponibles.length > 0) {
             setVoiceAndSpeak();
         } else {
             window.speechSynthesis.onvoiceschanged = () => {
+                const updatedVoices = window.speechSynthesis.getVoices();
+                // Re-ejecutar búsqueda si fue vacía al inicio
+                if (esMobile) {
+                    vozSeleccionada = updatedVoices.find(v => (v.lang.includes('es-us') || v.lang.includes('es-mx')) && (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('variant')));
+                } else {
+                    vozSeleccionada = updatedVoices.find(v => v.lang.includes('es') && (v.name.toLowerCase().includes('pablo') || v.name.toLowerCase().includes('david')));
+                }
                 setVoiceAndSpeak();
                 window.speechSynthesis.onvoiceschanged = null;
             };
